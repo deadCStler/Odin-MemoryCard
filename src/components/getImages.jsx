@@ -14,6 +14,8 @@ export function GetImages(props) {
     if (input === "over") {
       bestScore < currScore ? setBestScore(currScore) : bestScore;
       setGameOver(true);
+    } else if (input === "won") {
+      setBestScore(12);
     } else {
       setGameOver(false);
     }
@@ -72,6 +74,15 @@ export function GetImages(props) {
         <div className="load">GameOver</div>
         <div>
           <button onClick={() => game("reset")}>Restart</button>
+        </div>
+      </>
+    );
+  } else if (currScore === 12) {
+    return (
+      <>
+        <div className="load">Congrats! You won. Play Again?</div>
+        <div>
+          <button onClick={() => game("won")}>Restart</button>
         </div>
       </>
     );
