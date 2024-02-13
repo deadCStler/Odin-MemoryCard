@@ -1,25 +1,31 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-
-function ApiCall(arr) {
-  return Promise.all(
-    arr.map(async (ele) => {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${ele}`);
-      const data = await response.json();
-      const name = data.species.name;
-      const url = data.sprites.front_shiny;
-      const id = ele;
-      return { id, name, url };
-    })
-  );
-}
+import { Display, ApiCall } from "./helperMethods.jsx";
+import "./images.css";
 
 export function GetImages(props) {
   const [arrLink, setArrLink] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [currScore, setCurrScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
 
+  //function for game over or reset;
+  const game = (input) => {
+    if (input === "over") {
+      bestScore < currScore ? setBestScore(currScore) : bestScore;
+      setGameOver(true);
+    } else {
+      setGameOver(false);
+    }
+    arrLink.forEach((obj) => {
+      obj.isClicked = false;
+    });
+    const newArray = [...arrLink];
+    setArrLink(newArray);
+    setCurrScore(0);
+  };
+
+  //fetching data and updating
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,15 +39,14 @@ export function GetImages(props) {
           };
         });
         setArrLink(links);
-        setLoading(false);
       } catch (error) {
-        setLoading(false);
         console.error("Error:", error);
       }
     };
     fetchData();
   }, [props.arr]);
 
+  //shuffle function for the array
   function shuffle(e) {
     arrLink.forEach((obj) => {
       if (obj.id === e) {
@@ -49,8 +54,7 @@ export function GetImages(props) {
           obj.isClicked = true;
           setCurrScore(currScore + 1);
         } else {
-          bestScore < currScore ? setBestScore(currScore) : bestScore;
-          console.log("Game Over");
+          game("over");
         }
       }
     });
@@ -59,22 +63,29 @@ export function GetImages(props) {
     setArrLink(newArray);
   }
 
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
-
-  return (
-    <div>
-      {arrLink.map((link) => (
-        <div
-          key={link.id}
-          onClick={() => shuffle(link.id)}
-          style={{ border: `solid 2px black` }}
-        >
-          <p>{link.name}</p>
-          <img src={link.url} alt={`poke-${link.name}`} />
+  //returning the output
+  if (arrLink.length < 1) {
+    return <div className="load">Loading...</div>;
+  } else if (gameOver) {
+    return (
+      <>
+        <div className="load">GameOver</div>
+        <div>
+          <button onClick={() => game("reset")}>Restart</button>
         </div>
-      ))}
+      </>
+    );
+  }
+  return (
+    <div className="img_page">
+      <div className="scores">
+        <div>Current Score: {currScore}</div>
+        <div>Best Score: {bestScore}</div>
+      </div>
+      <div className="imagesContainer">{Display(arrLink, shuffle)}</div>
+      <div>
+        <button onClick={() => game("reset")}>Reset</button>
+      </div>
     </div>
   );
 }

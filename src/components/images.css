@@ -1,0 +1,47 @@
+.imagesContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 4rem;
+}
+
+img {
+  height: 120px;
+  width: 120px;
+}
+
+.img_page {
+  height: 100vh;
+  width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.imagesContainer > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: solid 6px #7e2553;
+  border-radius: 10px;
+  padding: 1rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.imagesContainer > div:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.scores {
+  font-size: 3rem;
+  padding: 1.5rem;
+}
+
+p {
+  font-size: 2rem;
+}
+
+.load {
+  font-size: 5vw;
+}
